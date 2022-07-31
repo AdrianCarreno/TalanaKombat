@@ -77,12 +77,17 @@ class BaseCharacter:
 
     @staticmethod
     def describe_movement(movement: str) -> str:
-        assert type(movement) is str, 'Movements must be a string'
-        assert len(movement) <= 5, 'Movements must be 5 or less characters'
-        assert not re.match(
-            '[^WASD]', movement, re.IGNORECASE), 'Movements must be only W, A, S or D characters'
+        if type(movement) is not str:
+            raise TypeError('Movements must be a string')
+        if len(movement) > 5:
+            raise ValueError('Movements must be 5 or less characters')
+        if re.search('[^WASD]', movement, re.IGNORECASE):
+            raise ValueError('Movements must be only W, A, S or D characters')
 
-        description = ''
+        if len(movement) == 0:
+            return ' did not move'
+
+        description = ' moved'
         moves = {'W': 'up', 'A': 'left', 'S': 'down', 'D': 'right'}
 
         for i, move in enumerate(movement):
@@ -92,7 +97,7 @@ class BaseCharacter:
                 elif i != 0:
                     description += ','
 
-            description += f" moved {moves[move]}"
+            description += f" {moves[move]}"
 
         return description
 
@@ -111,10 +116,8 @@ class BaseCharacter:
             return description + ' did nothing', 0
 
         description += BaseCharacter.describe_movement(movement)
-        if movement and special_attack:
-            description += ', and'
         if special_attack:
-            description += self.describe_special_attack(special_attack)
+            description += f", and{self.describe_special_attack(special_attack)}"
 
         return description, (special_attack['damage'] if special_attack else 0)
 

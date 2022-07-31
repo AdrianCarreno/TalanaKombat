@@ -44,20 +44,20 @@ class Combat:
             return None
 
     def set_players(self, player1: characters.BaseCharacter, player2: characters.BaseCharacter) -> 'Combat':
-        assert isinstance(
-            player1, characters.BaseCharacter), 'Player 1 must be a characters.BaseCharacter'
-        assert isinstance(
-            player2, characters.BaseCharacter), 'Player 2 must be a characters.BaseCharacter'
+        if not isinstance(player1, characters.BaseCharacter):
+            raise TypeError('Player 1 must be a characters.BaseCharacter')
+        if not isinstance(player2, characters.BaseCharacter):
+            raise TypeError('Player 2 must be a characters.BaseCharacter')
         self.__player1 = player1
         self.__player2 = player2
 
         return self
 
     def set_moves(self, player1moves: list[str], player2moves: list[str]) -> 'Combat':
-        assert type(
-            player1moves) is list, 'Player 1 moves must be a list of strings'
-        assert type(
-            player2moves) is list, 'Player 2 moves must be a list of strings'
+        if not type(player1moves) is list:
+            raise TypeError('Player 1 moves must be a list of strings')
+        if not type(player2moves) is list:
+            raise TypeError('Player 2 moves must be a list of strings')
 
         self.__player1moves = player1moves
         self.__player2moves = player2moves
@@ -89,32 +89,30 @@ class Combat:
             return self.player1, self.player2, player1move, player2move
 
     def fight(self) -> None:
-        assert self.player1, 'Player 1 must be set'
-        assert self.player2, 'Player 2 must be set'
-        assert self.player1moves, 'Player 1 moves must be set'
-        assert self.player2moves, 'Player 2 moves must be set'
+        if not self.player1 or not self.player2:
+            raise AttributeError('Combat must have two players')
+        if not self.player1moves or not self.player2moves:
+            raise AttributeError('Combat must have two sets of moves')
 
         for p1, p2 in zip(self.player1moves, self.player2moves):
             first, second, p1, p2 = self.decide_order(p1, p2)
             try:
                 description, damage = first.make_move(p1)
-                print(description)
+                yield description
                 second.receive_damage(damage)
             except exceptions.DeadPlayerException:
-                print(f"{second.name} is dead")
+                yield f"{second.name} is dead"
                 break
             try:
                 description, damage = second.make_move(p2)
-                print(description)
+                yield description
                 first.receive_damage(damage)
             except exceptions.DeadPlayerException:
-                print(f"{first.name} is dead")
+                yield f"{first.name} is dead"
                 break
         if self.player1.is_alive() and not self.player2.is_alive():
-            print(
-                f"{self.player1.name} is the winner and has {self.player1.health} health")
+            yield f"{self.player1.name} is the winner and has {self.player1.health} health"
         elif self.player2.is_alive() and not self.player1.is_alive():
-            print(
-                f"{self.player2.name} is the winner and has {self.player2.health} health")
+            yield f"{self.player2.name} is the winner and has {self.player2.health} health"
         else:
-            print('Combat ended in a draw')
+            yield 'Combat ended in a draw'
