@@ -1,0 +1,2 @@
+class DeadPlayerException(Exception):
+    pass
