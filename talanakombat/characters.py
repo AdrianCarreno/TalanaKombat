@@ -136,6 +136,9 @@ class TonynStallone(BaseCharacter):
     def __repr__(self) -> str:
         return f"TalanaKombat.TonynStallone(health={self.health}, special_attacks={self.special_attacks})"
 
+    def __str__(self) -> str:
+        return super().__str__()
+
 
 class ArnaldorShuatseneguer(BaseCharacter):
     def __init__(self, **kwargs) -> None:
@@ -150,3 +153,6 @@ class ArnaldorShuatseneguer(BaseCharacter):
 
     def __repr__(self) -> str:
         return f"TalanaKombat.ArnaldorShuatseneguer(health={self.health}, special_attacks={self.special_attacks})"
+
+    def __str__(self) -> str:
+        return super().__str__()

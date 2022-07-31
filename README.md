@@ -4,7 +4,17 @@ This is a simple game that confronts 2 characters, _Tonyn Stallone_ and _Arnaldo
 
 ## Dependencies
 
-This game has no dependencies. But if you want to run tests, you need to install the following dependencies:
+This game has onlye one dependency:
+
+-   flask
+
+You can install it with:
+
+```
+pip install -r requirements
+```
+
+If you want to run tests, you need to install the following dependencies:
 
 -   pytest
 
@@ -26,6 +36,10 @@ The game is simple:
 -   All the moves are case-insensitive, and can only be `W`, `A`, `S` or `D` for movement, and `P` or `K` for attacks.
 
 ## Usage
+
+You can play the game in 2 ways: CLI or REST.
+
+### CLI
 
 To play the game, you must create 2 players, and then add them to the combat. Then you must set the moves for each player, and then start the game.
 
@@ -55,7 +69,12 @@ player1 = tk.TonynStallone()
 player2 = tk.ArnaldorShuatseneguer()
 player1moves = ['D+K', 'DSD+P', 'S', 'DSD+K', 'SD+P']
 player2moves = ['SA+K', 'SA', 'SA+K', 'ASA+P', 'SA+P']
-combat = tk.Combat(player1, player2, player1moves, player2moves)
+combat = tk.Combat(
+    player1=player1,
+    player2=player2,
+    player1moves=player1moves,
+    player2moves=player2moves
+)
 ```
 
 The `Combat.fight()` method returns a generator that yields the turns of the game. Each turn is a `string` with the player's name and the move they used.
@@ -81,6 +100,50 @@ Arnaldor Shuatseneguer is the winner and has 2 health
 ```
 
 The attack verbs (landed, connected, hit, imparted) are random to make the narration more interesting.
+
+### REST
+
+Just type on your console:
+
+```
+flask run
+```
+
+And send a request to the following URL (assuming you have flask running on port 5000):
+
+```
+POST 127.0.0.1:5000/combat
+```
+
+With a JSON with a structure like this:
+
+```json
+{
+    "player1": {
+        "movements": ["D", "DSD", "S", "DSD", "SD"],
+        "attacks": ["K", "P", "", "K", "P"]
+    },
+    "player2": {
+        "movements": ["SA", "SA", "SA", "ASA", "SA"],
+        "attacks": ["K", "", "K", "P", "P"]
+    }
+}
+```
+
+The JSON can also have the keys in spanish:
+
+```json
+{
+    "jugador1": {
+        "movimientos": ["D", "DSD", "S", "DSD", "SD"],
+        "ataques": ["K", "P", "", "K", "P"]
+    },
+    "jugador2": {
+        "movimientos": ["SA", "SA", "SA", "ASA", "SA"],
+        "ataques": ["K", "", "K", "P", "P"]
+    }
+}
+```
 
 ## Testing
 
